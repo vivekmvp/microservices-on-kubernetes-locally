@@ -71,11 +71,11 @@ Download and Install Kubectl from https://kubernetes.io/docs/tasks/tools/install
 
 # Deploy a microservice container to Kubernetes
 
-## Deploy both backend and frontend services to Kubernetes
+## Create a deployment yml file for both backend and frontend
 
-Create a deployment yaml file for the backend service.  You describe what you want Kubernetes to do through a YAML file.
+Create a deployment yml file for the backend service.  You describe what you want Kubernetes to do through a YAML file.
 
-## backend-deploy.yaml file
+## backend-deploy.yml file
 
 ```
 ---
@@ -114,7 +114,7 @@ spec:
     app: onlinestorebackend
 ```
 
-## frontend-deploy.yaml file
+## frontend-deploy.yml file
 
 ```
 ---
@@ -153,4 +153,15 @@ spec:
   - port: 80
   selector:
     app: onlinestorefrontend
-```    
+```
+
+-------
+
+## Deploy a deployment yml file for both backend and frontend services to Kubernetes
+
+## Run following commands for both backend and frontend services
+
+```
+kubectl apply -f backend-deploy.yml
+kubectl apply -f frontend-deploy.yml
+```
