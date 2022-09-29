@@ -4,7 +4,7 @@ Running microservices and web on Kubernetes Locally :star_struck:
 -----
 
 - We will be practically implementing [Deploy a .NET microservice to Kubernetes](https://learn.microsoft.com/en-us/training/modules/dotnet-deploy-microservices-kubernetes/)
-- We will be using our [Indepth-microservices code template](https://github.com/vivekmvp/indepth-microservices) to begin with. :+1:
+- We will be using our [Run Microservice On Docker Locally code template](https://github.com/vivekmvp/run-microservices-on-docker-locally) to begin with. :+1:
 
 ----
 
@@ -14,159 +14,29 @@ Running microservices and web on Kubernetes Locally :star_struck:
 
 ----
 
-# Creating a Docker File
+# Push the Docker Images to Docker Hub
 
-## Creating a Docker File for Frontend web
+Last time we have created Docker Images locally.  Now lets push those local docker images to docker hub.
 
-```
-  FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-  WORKDIR /src
-  COPY frontend.csproj .
-  RUN dotnet restore
-  COPY . .
-  RUN dotnet publish -c release -o /app
-
-  FROM mcr.microsoft.com/dotnet/aspnet:6.0
-  WORKDIR /app
-  EXPOSE 80
-  EXPOSE 443
-  COPY --from=build /app .
-  ENTRYPOINT ["dotnet", "frontend.dll"]
-```
+![image](https://user-images.githubusercontent.com/30829678/193127849-21c9c1a6-6c69-4e9e-aec5-45bcd5d7a562.png)
 
 
+## Commands to push local docker images to docker hub
 
-## Creating a Docker File for Backend Api
-
-And similarly add Docker file code for Backend api
-
-----
-
-# Build and Run the Docker Image locally
-
-## Build Docker Image
-
-Go to Backend code directory and build the docker image.
+In order to push local docker images to docker hub first we have to tag those images.
 
 ```
-docker build -t onlinestorebackend .
+docker tag onlinestorefrontend [YOUR DOCKER USER NAME]/onlinestorefrontend
+docker tag onlinestorebackend [YOUR DOCKER USER NAME]/onlinestorebackend
 ```
-
-![image](https://user-images.githubusercontent.com/30829678/192162597-a01be5e2-4b58-4a52-809c-b764252b3950.png)
-
+![image](https://user-images.githubusercontent.com/30829678/193128869-2d44cfa9-478b-477c-8f37-35767d8863f4.png)
 
 
-And similarly for Frondend
-
+And then push those images
 
 ```
-docker build -t onlinestorefrontend .
+docker push [YOUR DOCKER USER NAME]/onlinestorefrontend
+docker push [YOUR DOCKER USER NAME]/onlinestorebackend
 ```
+![image](https://user-images.githubusercontent.com/30829678/193129388-99051a6c-b24d-4bd7-a72d-747957f72de1.png)
 
-![image](https://user-images.githubusercontent.com/30829678/192162545-0b6a15e1-851f-4eec-b2ab-f49259ababc0.png)
-
-![image](https://user-images.githubusercontent.com/30829678/192162561-435c5687-5d9b-48b2-8238-3645279f6b96.png)
-
-
-You can verify that image was build successfully in Docker Desktop locally
-
-![image](https://user-images.githubusercontent.com/30829678/192162614-67d298ac-0186-41b2-8936-10c140cceb9c.png)
-
-
-
-## Run Docker Image Locally
-
-Go to Backend code directory and run the docker image.
-
-
-```
-docker run -it --rm -p 5021:80 --name onlinestorebackendcontainer onlinestorebackend
-```
-
-Verifying by running the backend api endpoint
-
-```
-http://localhost:5021/product
-```
-
-![image](https://user-images.githubusercontent.com/30829678/192166967-fdfe544c-3034-40c0-a56d-65d53372117f.png)
-
-
-
-
-And similarly for Frondend
-
-```
-docker run -it --rm -p 5067:80 --name onlinestorefrontendcontainer onlinestorefrontend
-```
-
-Verifying by running the frontend url
-
-```
-http://localhost:5067
-```
-
-![image](https://user-images.githubusercontent.com/30829678/192105629-11b9cf64-8933-4dc0-88ce-8f853e3a2b07.png)
-
-
-
-
-
-----
-
-# Running the docker image using docker-compose file
-
-## Create a docker-compose.yaml file
-
-```
-version: '3.4'
-
-services: 
-
-  frontend:
-    image: onlinestorefrontend
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-    environment: 
-      - backendUrl=http://backend
-    ports:
-      - "5067:80"
-    depends_on: 
-      - backend
-
-
-  backend:
-    image: onlinestorebackend
-    build: 
-      context: backend
-      dockerfile: Dockerfile
-    ports: 
-      - "5021:80"
-```      
-
-**Run the following command to Build image using docker-compose.yaml file**
-
-```      
-docker-compose build
-```      
-
-![image](https://user-images.githubusercontent.com/30829678/192371691-0536995a-4680-4865-9f91-9be709f64797.png)
-
-<br/>
-
-**Run the following command to Run image using docker-compose.yaml file**
-
-```      
-docker-compose up
-```      
-![image](https://user-images.githubusercontent.com/30829678/192371800-caef0a14-748f-4a04-93b7-7ae2f471cf5f.png)
-
-
-Verifying by running the frontend url
-
-```
-http://localhost:5067
-```
-
-![image](https://user-images.githubusercontent.com/30829678/192105629-11b9cf64-8933-4dc0-88ce-8f853e3a2b07.png)
